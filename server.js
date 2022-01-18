@@ -1,3 +1,6 @@
+// connect mysql database. import mysql2
+const mysql = require('mysql2');
+
 // import express
 const express = require('express');
 
@@ -9,14 +12,26 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// connects application to the mysql database
+const db = mysql.createConnection(
+    {
+        host: 'localhost',
+        // your MySQL username,
+        user: 'root',
+        // Your MySQL password
+        password: '69Sql552',
+        database: 'election'
+    },
+    console.log('Connected to the election database.')
+);
 
 
 
 
-
-
-
-
+// return all the date in the candidates table
+db.query(`SELECT * FROM candidates`, (err, rows) => {
+    console.log(rows);
+});
 
 // default response for any other request (Not Found)
 app.use((req, res) => {
