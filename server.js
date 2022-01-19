@@ -40,7 +40,12 @@ const db = mysql.createConnection(
 // This route is designated with the endpoint /api/candidates.
 // the api in the URL signifies that this is an API endpoint.
 app.get('/api/candidates', (req, res) => {
-    const sql = `SELECT * FROM candidates`;
+        // JOIN syntax
+        const sql = `SELECT candidates.*, parties.name
+        AS party_name
+        FROM candidates
+        LEFT JOIN parties
+        ON candidates.party_id = parties.id`;
 
     db.query(sql, (err, rows) => {
         if(err) {
@@ -52,12 +57,19 @@ app.get('/api/candidates', (req, res) => {
             data: rows
         });
     });
+
 });
 
 // API endpoint to Get a single candidate in an Express.js route
 // the endpoint has a route parameter that will hold the value of the id to specify which candidate we'll select from the database.
 app.get('/api/candidate/:id', (req, res) => {
-    const sql = `SELECT * FROM candidates WHERE id = ?`;
+        // JOIN syntax
+        const sql = `SELECT candidates.*, parties.name
+        AS party_name
+        FROM candidates
+        LEFT JOIN parties
+        ON candidates.party_id = parties.id
+        WHERE candidates.id = ?`;
     // In the database call, we'll assign the captured value populated in the req.params object with the key id to params.
     // The database call will then query the candidates table with this id and retrieve the row specified. Because params can be accepted in the database call as an array,
     // params is assigned as an array with a single element, req.params.id.
@@ -73,6 +85,7 @@ app.get('/api/candidate/:id', (req, res) => {
         data: row
       });
     });
+
   });
 
 // delete a candidate using query
@@ -139,7 +152,7 @@ app.post('/api/candidate', ({ body }, res) => {
 
     const sql = `INSERT INTO candidates (first_name, last_name, industry_connected)
         VALUES (?,?,?)`;
-    const params = [body.firs_name, body.last_name, body.industry_connected];
+    const params = [body.first_name, body.last_name, body.industry_connected];
 
     db.query(sql, params, (err, result) => {
         if(err) {
@@ -152,8 +165,6 @@ app.post('/api/candidate', ({ body }, res) => {
         });
     });
 });
-
-
 
 // -----------------------------------------------
 
